@@ -1,0 +1,165 @@
+// Colors
+$colorBackgroundAdmin: #F9F9F9;
+$colorBlack: #000000;
+$colorGray: #554a4c;
+$colorMediumGray: #50555b;
+$colorLightGray: #a4aab6;
+$colorRed: #FF4355;
+$colorBlue: #03B7E5;
+$colorYellow: #FBAA21;
+$colorWhite: #FFFFFF;
+$colorTurquoise: #35DEF4;
+$colorLightBlue: #29B7E5;
+$colorHoverBlue: #1e85a7;
+$colorGreen: #66bb6a;
+
+// Sizes
+$title: 1.6rem;
+$text: 1rem;
+
+header {
+  background: black;
+  width: 100%;
+  height: 48px;
+  position: relative;
+  img#O365_MainLink_TenantLogoImg {
+    position: absolute;
+    height: 48px;
+    left: 48px;
+  }
+}
+
+.container-body{
+  max-width: 1280px;
+}
+
+.title{
+  h1{
+    font-size: $title;
+  }
+}
+
+.breadcum{
+  a{
+    color: gray;
+  }
+}
+
+table{
+  position: relative;
+  border-collapse: collapse !important; 
+  thead{
+    tr{
+      th{
+        position: sticky;
+        top: 0; /* Don't forget this, required for the stickiness */
+        background-color: #FFFFFF;
+      }
+    }
+  }
+}
+
+.error{
+  th,
+  td{
+    color: red !important;
+  }
+}
+
+.link-row{
+  cursor: pointer;
+}
+
+.badge a {
+  color: #fff;
+}
+
+.indicator-{
+  width: 30px;
+  height: 30px;
+  display: inline-block;
+  &stores{
+    background-color: #cc1111;
+  }
+  &rpro{
+    background-color: #30cccb;
+  }
+  &tpaso{
+    background-color: #1111cc;
+  }
+}
+
+.btn-dbs{
+  color: #000000; 
+  border: 1px solid #000000; 
+  padding: 15px; 
+  border-radius: 5px;
+  transition: all .3s;
+  &:hover{
+    color: #fff; 
+    background-color: #000000;
+  }
+  &.active{
+    color: #fff; 
+    background-color: #000000;
+  }
+}
+
+.full-width{
+  display: block;
+  width: 100%;
+}
+
+.preloader-wrapper {
+  height: 100%;
+  width: 100%;
+  background: #FFF;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 9999999;
+  .preloader {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    -webkit-transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%);
+    width: 120px;
+  }
+}
+
+.loader-container{
+  background-color: #fff;
+  position: fixed;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 2;
+  pointer-events: none;
+  overflow: hidden;
+  .logo-loader{
+    width: 300px;
+    position: absolute;
+    top: calc(50% - 53px);
+    left: calc(50% - 150px);
+  }
+}
+
+.loader{
+  margin: 0 0 2em;
+  height: 100px;
+  width: 20%;
+  text-align: center;
+  padding: 1em;
+  margin: 0 auto 1em;
+  display: inline-block;
+  vertical-align: top;
+}
+
+/*
+  Set the color of the icon
+*/
+svg path,
+svg rect{
+  fill: #000000;
+}

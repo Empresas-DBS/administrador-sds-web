@@ -1,0 +1,45 @@
+header {
+  background: black;
+  width: 100%;
+  height: 48px;
+  position: relative;
+}
+header img#O365_MainLink_TenantLogoImg {
+  position: absolute;
+  height: 48px;
+  left: 48px;
+}
+
+.container-body {
+  max-width: 1280px;
+}
+
+.title h1 {
+  font-size: 1.6rem;
+}
+
+.breadcum a {
+  color: gray;
+}
+
+table {
+  position: relative;
+  border-collapse: collapse !important;
+}
+table thead tr th {
+  position: sticky;
+  top: 0;
+  /* Don't forget this, required for the stickiness */
+  background-color: #FFFFFF;
+}
+
+.error th,
+.error td {
+  color: red !important;
+}
+
+.link-row {
+  cursor: pointer;
+}
+
+/*# sourceMappingURL=styles.css.map */
