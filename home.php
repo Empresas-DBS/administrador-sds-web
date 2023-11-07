@@ -1,13 +1,13 @@
 <?php
 include "include/header.php";
 
-$host_prefix_default = $helper->get_config("host_prefix_default");
-$helper->host = $helper->get_config("{$host_prefix_default}host");
-$helper->port = $helper->get_config("{$host_prefix_default}port");
-$helper->username = $helper->get_config("{$host_prefix_default}username");
-$helper->password = $helper->get_config("{$host_prefix_default}password");
+// $host_prefix_default = $helper->get_config("host_prefix_default");
+// $helper->host = $helper->get_config("{$host_prefix_default}host");
+// $helper->port = $helper->get_config("{$host_prefix_default}port");
+// $helper->username = $helper->get_config("{$host_prefix_default}username");
+// $helper->password = $helper->get_config("{$host_prefix_default}password");
 
-$crontab = new crontab\Ssh2_crontab_manager($helper->host, $helper->port, $helper->username, $helper->password);
+// $crontab = new crontab\Ssh2_crontab_manager($helper->host, $helper->port, $helper->username, $helper->password);
 ?>
                 <div class="app-main__outer">
                     <div class="app-main__inner">

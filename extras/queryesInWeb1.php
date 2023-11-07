@@ -5,11 +5,11 @@ class Web1
 {
 	public $link;
     public $host = "10.80.100.30"; // servidor
-    public $dbName = "reportuser";
+    public $dbName = "Rpro9";
     public $dbUser = "reportuser";
     public $dbPass = "report";
     public $protocol = "TCP";
-    public $port = "1526";
+    public $port = "1521";
     public $service = "rproods";
     public $result;
     public $stid;

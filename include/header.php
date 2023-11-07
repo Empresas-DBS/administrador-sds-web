@@ -8,9 +8,11 @@ date_default_timezone_set('America/Santiago');
 // $helper = new common\Helper; 
 
 $dbWeb1 = new database\Web1;
+// $dbOracle = new ora\OracleConnection;
 // $helper->db = new dev\Database;
 
 $dbWeb1->dbConnection();
+// $dbOracle->dbConnection();
 // $helper->dbConnect();
 ?>
 
@@ -107,7 +109,7 @@ $dbWeb1->dbConnection();
                             <button class="search-icon"><span></span></button>
                         </div>
                         <button class="close"></button>
-                    </div>        -->
+                    </div> -->
                 </div>
                 <div class="app-header-right">
                     <div class="header-btn-lg pr-0">
@@ -469,7 +471,7 @@ $dbWeb1->dbConnection();
                                         Inicio
                                     </a>
                                 </li>
-                                <li class="app-sidebar__heading">Administrar Crontab</li>
+                                <!-- <li class="app-sidebar__heading">Administrar Crontab</li>
 
                                 <li>
                                     <a href="view.php" class="<?php echo ($file == "filter-by-sku.php")?'mm-active':''; ?>">
@@ -482,9 +484,9 @@ $dbWeb1->dbConnection();
                                         <i class="fa fa-fw" aria-hidden="true" title="Agregar nueva tarea al crontab"></i>
                                         Nueva
                                     </a>
-                                </li>
+                                </li> -->
 
-                                <li class="app-sidebar__heading">Configuración</li>
+                                <!-- <li class="app-sidebar__heading">Configuración</li>
 
                                 <li class="li-submenu <?php 
                                                         echo    ($file == "server-add.php" 
@@ -508,7 +510,7 @@ $dbWeb1->dbConnection();
                                             </a>
                                         </li>
                                     </ul>
-                                </li>
+                                </li> -->
 
                             </ul>
                         </div>

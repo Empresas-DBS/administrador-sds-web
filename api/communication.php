@@ -24,7 +24,7 @@ else
 $sess_data = $dr->getPermissionsFromSession($client_dbs_mail, $inserted_id_session);
 if( ! is_array($sess_data))
 {
-    header("location: http://192.168.2.110/REPOSITORIO/dashboard-crontab/login.php");
+    header("location: http://192.168.2.110/REPOSITORIO/administrador-sds-web/login.php");
     die();
 }
 else
