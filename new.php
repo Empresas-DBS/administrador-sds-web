@@ -1,25 +1,81 @@
 <?php
 include "include/header.php";
 
-$display_text = "display:none;";
-if($_POST)
+$showMessage = false;
+$showEditTitle = false;
+$msg_type = "success";
+$sku_visibility = "";
+if($_GET)
 {
-    $host_prefix_default = $helper->get_config("host_prefix_default");
-    $helper->host = $helper->get_config("{$host_prefix_default}host");
-    $helper->port = $helper->get_config("{$host_prefix_default}port");
-    $helper->username = $helper->get_config("{$host_prefix_default}username");
-    $helper->password = $helper->get_config("{$host_prefix_default}password");
+    $alu = $_GET["alu"];
+    $canal = $_GET["canal"];
 
-    $crontab = new crontab\Ssh2_crontab_manager($helper->host, $helper->port, $helper->username, $helper->password);
+    $result = $sds->search($alu, $canal);
+    $sku_visibility = "display: none;";
+    $showEditTitle = true;
+}
+elseif($_POST)
+{
+    $sbs_no = $_POST["sbs_no"];
+    $store_no = $_POST["store_no"];
+    $alu = $_POST["alu"];
+    $qty = $_POST["qty"];
+    $seguridad = $_POST["seguridad"];
+    $canal = $_POST["canal"];
+    $desde = $_POST["desde"];
+    $hasta = $_POST["hasta"];
 
-    /**
-     * *Anexar un trabajo cron
-     */
-    $cron_part = $_POST['cronInput'];
-    $path_part = $_POST['scriptPath'];
-    $cron_line = $cron_part . " " . $path_part;
-    $crontab->append_cronjob($cron_line);
-    $display_text = "display:block;";
+    if(($sbs_no != "")&&($store_no != "")&&($alu != "")&&($qty != "")&&($seguridad != "")&&($canal != ""))
+    {
+        $fvalues = array(
+            "sbs_no" => $sbs_no,
+            "store_no" => $store_no,
+            "alu" => strtoupper($alu),
+            "qty" => $qty,
+            "seguridad" => $seguridad,
+            "canal" => $canal,
+            "desde" => $desde,
+            "hasta" => $hasta
+        );
+        $result = $sds->insert($fvalues);
+
+        if($result == "OK")
+        {
+            $msg = "Registro agregado correctamdente.";
+            $showMessage = true;
+            $msg_type = "success";
+        }
+        elseif($result == "NOK_DELETE")
+        {
+            $msg = "Ocurrio un error al elimiar el registro anterior, contactese con el area de desarrollo (Error #1002).";
+            $showMessage = true;
+            $msg_type = "danger";
+        }
+        elseif($result == "NOK_ERROR_INSERT")
+        {
+            $msg = "Ocurrio un error al agregar el registro, contactese con el area de desarrollo (Error #1001).";
+            $showMessage = true;
+            $msg_type = "danger";
+        }
+        elseif($result == "NOK_ALREADY_EXIST")
+        {
+            $msg = "No se puede agregar el registro, ya existe este SKU para este canal de venta.";
+            $showMessage = true;
+            $msg_type = "danger";
+        }
+        else
+        {
+            $msg = "Ocurrio un error al agregar el registro.";
+            $showMessage = true;
+            $msg_type = "danger";
+        }
+    }
+    else
+    {
+        $msg = "Debe completar los campos obligatorios.";
+        $showMessage = true;
+        $msg_type = "danger";
+    }
 }
 ?>
                 <div class="app-main__outer">
@@ -28,11 +84,11 @@ if($_POST)
                             <div class="page-title-wrapper">
                                 <div class="page-title-heading">
                                     <div class="page-title-icon">
-                                        <i class="pe-7s-home icon-gradient bg-mean-fruit">
+                                        <i class="pe-7s-plus icon-gradient bg-mean-fruit">
                                         </i>
                                     </div>
-                                    <div>Dashboard crontab
-                                        <div class="page-title-subheading">Agregar una nueva tarea cron al sistema.
+                                    <div>Administrador de stock de seguridad e iluminación
+                                        <div class="page-title-subheading">Agrega un nuevo registro al sistema para sincronizar.
                                         </div>
                                     </div>
                                 </div>
@@ -42,59 +98,85 @@ if($_POST)
                         <div class="row">
                             <div class="col-lg-12">
                                 <div class="main-card mb-3 card">
+                                        <?php
+                                        if($showEditTitle):
+                                        ?>
+                                            <div class="card-header">
+                                                Editar SKU: <?php echo "{$result[0]["alu"]}"; ?>
+                                            </div>
+                                        <?php
+                                        else:
+                                        ?>
                                         <div class="card-header">
-                                            Agregar nueva tarea al crontab
+                                            Agregar nuevo SKU
                                         </div>
+                                        <?php
+                                        endif;
+                                        ?>
+
+                                        <?php
+                                        if($showMessage):
+                                        ?>
+                                            <li class="list-group-item-<?php echo $msg_type; ?> list-group-item"><?php echo $msg; ?></li>
+                                        <?php
+                                        endif;
+                                        ?>
+
                                         <div class="card-body">
-                                            <p class="text-muted">Para interpretar las líneas en el crontab tablas de configuración, sigue una sintaxis Crontab. Crontab tiene seis campos y los primeros cinco (1-5) campos definen la fecha y hora de ejecución. El último campo, es decir, el sexto campo, podría ser un nombre de usuario y / o tarea / trabajo / comando / script que se ejecutará.</p>
-                                            <P class="text-muted">* &nbsp;* &nbsp;* &nbsp;* &nbsp;* &nbsp;&nbsp;&nbsp;&nbsp;COMANDO A EJECUTAR</p>
-                                            <P class="text-muted">
-                                            │ │ │ │ │<br>
-                                            │ │ │ │ │<br>
-                                            │ │ │ │ │ _________   Día de la semana (0 - 6) (0 es domingo, o use nombres)<br>
-                                            │ │ │ │____________ Mes (1 - 12), * significa todos los meses<br>
-                                            │ │ │______________  Día del mes (1 - 31), * significa todos los días<br>
-                                            │ │________________  Hora (0 - 23), * significa cada hora<br>
-                                            │___________________ Minuto (0 - 59), * significa cada minuto<br>
-                                            </p>
-                                            <form name="cron_new" id="cron_new" method="post" action="new.php">
+                                            <form name="form_new" id="form_new" method="post" action="new.php">
                                                 <div class="row">
-                                                    <div class="col-sm-4">
-                                                        <!-- <input placeholder="30 8 * * 7 home/path/to/command/the_command.sh >/dev/null 2>&1" type="text" class="mb-2 form-control" name="cron_new_line" id="cron_new_line"> -->
-                                                        <input placeholder="" type="text" class="mb-2 form-control" name="cronInput" id="cronInput" value="* * * * *" placeholder="* * * * *" required="" autocorrect="off" autocapitalize="none">
+                                                    <div class="col-sm-2">
+                                                        <input type="text" class="mb-2 form-control" name="sbs_no" id="" value="<?php echo (isset($result[0]["sbs_no"]))?$result[0]["sbs_no"]:"2"; ?>" placeholder="SBS_NO" required="" autocorrect="off" autocapitalize="none" autocomplete="off">
                                                     </div>
-                                                    <div class="col-sm-8">
-                                                        <input placeholder="" type="text" class="mb-2 form-control" name="scriptPath" id="scriptPath" value="" placeholder="home/path/to/command/the_command.sh" required="" autocorrect="off" autocapitalize="none">
+                                                    <div class="col-sm-2">
+                                                        <input type="text" class="mb-2 form-control" name="store_no" id="" value="<?php echo (isset($result[0]["store_no"]))?$result[0]["store_no"]:"48"; ?>" placeholder="STORE_NO" required="" autocorrect="off" autocapitalize="none" autocomplete="off">
+                                                    </div>
+                                                    <div class="col-sm-8" style="<?php echo "{$sku_visibility}"; ?>">
+                                                        <input type="text" class="mb-2 form-control" name="alu" id="" value="<?php echo (isset($result[0]["alu"]))?$result[0]["alu"]:""; ?>" placeholder="SKU" required="" autocorrect="off" autocapitalize="none" autocomplete="off">
+                                                    </div>
+                                                    <div class="col-sm-4">
+                                                        <input type="text" class="mb-2 form-control" name="qty" id="" value="<?php echo (isset($result[0]["qty"]))?$result[0]["qty"]:""; ?>" placeholder="N° ILUMINADO" required="" autocorrect="off" autocapitalize="none" autocomplete="off">
+                                                    </div>
+                                                    <div class="col-sm-4">
+                                                        <input type="text" class="mb-2 form-control" name="seguridad" id="" value="<?php echo (isset($result[0]["seguridad"]))?$result[0]["seguridad"]:""; ?>" placeholder="N° SDS" required="" autocorrect="off" autocapitalize="none" autocomplete="off">
+                                                    </div>
+                                                    <?php
+                                                    if(isset($result[0]["canal"])):
+                                                    ?>
+                                                    <div class="col-sm-4">
+                                                        <select class="mb-2 form-control" name="canal" required="">
+                                                            <option value="">Seleccione canal</option>
+                                                            <option value="MAGENTO" <?php echo ($result[0]["canal"] == "MAGENTO")?"selected":""; ?>>Magento</option>
+                                                            <option value="MULTIVENDE" <?php echo ($result[0]["canal"] == "MULTIVENDE")?"selected":""; ?>>Multivende</option>
+                                                        </select>
+                                                    </div>
+                                                    <?php
+                                                    else:
+                                                    ?>
+                                                    <div class="col-sm-4">
+                                                        <select class="mb-2 form-control" name="canal" required="">
+                                                            <option value="">Seleccione canal</option>
+                                                            <option value="MAGENTO">Magento</option>
+                                                            <option value="MULTIVENDE">Multivende</option>
+                                                        </select>
+                                                    </div>
+                                                    <?php
+                                                    endif;
+                                                    ?>
+                                                    <div class="col-sm-4">
+                                                        <input type="text" class="mb-2 form-control datepicker" name="desde" id="datepicker" value="<?php echo (isset($result[0]["desde"]))?$result[0]["desde"]:""; ?>" placeholder="Fecha desde" autocorrect="off" autocapitalize="none" autocomplete="off">
+                                                    </div>
+                                                    <div class="col-sm-4">
+                                                        <input type="text" class="mb-2 form-control datepicker" name="hasta" id="datepicker" value="<?php echo (isset($result[0]["hasta"]))?$result[0]["hasta"]:""; ?>" placeholder="Fecha hasta" autocorrect="off" autocapitalize="none" autocomplete="off">
                                                     </div>
 
                                                     <div class="col-sm-12">
-                                                        <h2 id="cronsTrueExpression" class="text-secondary text-center" style="color: #6c757d!important;">Cada minuto</h2>
-                                                        <div id="iemdiv" class="mt-3 invalid-feedback text-center text-success">Expresión de cron no válida</div>
-                                                        <button type="submit" class="btn btn-primary btn-new-cron" disabled>Agregar</button>
+                                                        <button type="submit" class="btn btn-primary btn-new">Agregar</button>
                                                     </div>
                                                 </div>
                                             </form>
 
                                         </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="row" style="<?php echo $display_text; ?>">
-                            <div class="col-md-12">
-                                <div class="main-card card">
-                                    <div class="card-body table-responsive">
-                                        <div class="alert alert-success fade show" role="alert">
-                                            <h4 class="alert-heading">Hecho!</h4>
-                                            <p>La tarea se ha agregado al crontab del servidor.</p>
-                                            <hr>
-                                        </div>
-                                        <?php
-                                        /**
-                                         * Contenido
-                                         */
-                                        ?>
-                                    </div>
                                 </div>
                             </div>
                         </div>

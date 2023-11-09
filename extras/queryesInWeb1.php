@@ -52,13 +52,47 @@ $tns="
     public function dbQuery($query)
     {
         $this->stid = oci_parse($this->link, $query);
-        oci_execute($this->stid);
+        return oci_execute($this->stid);
     }
 
     // public function dbNumRows()
     // {
     //     return $this->result->num_rows;
     // }
+
+    public function dbGetSearch()
+    {
+        $i = 0;
+        $array_rows = array();
+        while ($row = oci_fetch_array($this->stid, OCI_ASSOC+OCI_RETURN_NULLS))
+        {	
+            $array_rows[$i]["id"] = bin2hex($row["ID"]); 
+            $array_rows[$i]["sbs_no"] = iconv('ISO-8859-1', 'UTF-8', $row["SBS_NO"]); 
+            $array_rows[$i]["store_no"] = iconv('ISO-8859-1', 'UTF-8', $row["STORE_NO"]); 
+            $array_rows[$i]["alu"] = iconv('ISO-8859-1', 'UTF-8', $row["ALU"]); 
+            $array_rows[$i]["qty"] = iconv('ISO-8859-1', 'UTF-8', $row["QTY"]); 
+            $array_rows[$i]["seguridad"] = iconv('ISO-8859-1', 'UTF-8', $row["SEGURIDAD"]); 
+            $array_rows[$i]["desde"] = iconv('ISO-8859-1', 'UTF-8', $row["DESDE"]); 
+            $array_rows[$i]["hasta"] = iconv('ISO-8859-1', 'UTF-8', $row["HASTA"]); 
+            $array_rows[$i]["canal"] = iconv('ISO-8859-1', 'UTF-8', $row["CANAL"]); 
+            $i++;
+        }
+
+        return $array_rows;
+    }
+
+    public function dbGetCount()
+    {
+        $i = 0;
+        $array_rows = array();
+        while ($row = oci_fetch_array($this->stid, OCI_ASSOC+OCI_RETURN_NULLS))
+        {	
+            $array_rows[$i]["cantidad"] = iconv('ISO-8859-1', 'UTF-8', $row["CANTIDAD"]); 
+            $i++;
+        }
+
+        return $array_rows;
+    }
 
     // public function dbGetResultByCompany()
     // {

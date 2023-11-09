@@ -4,16 +4,16 @@ include 'system/init.php';
 
 date_default_timezone_set('America/Santiago');
 
-// $server = new server\server_manager;
+$sds = new process_ilu\sds;
 // $helper = new common\Helper; 
 
-$dbWeb1 = new database\Web1;
-// $dbOracle = new ora\OracleConnection;
-// $helper->db = new dev\Database;
+$sds->dbWeb1 = new database\Web1;
 
-$dbWeb1->dbConnection();
-// $dbOracle->dbConnection();
-// $helper->dbConnect();
+$sds->dbWeb1->dbConnection();
+
+$url = $_SERVER["REQUEST_URI"];
+$explodeUrl = explode("/", $url);
+$file = $explodeUrl[count($explodeUrl) - 1];
 ?>
 
 <!doctype html>
@@ -471,46 +471,18 @@ $dbWeb1->dbConnection();
                                         Inicio
                                     </a>
                                 </li>
-                                <!-- <li class="app-sidebar__heading">Administrar Crontab</li>
+                                <li class="app-sidebar__heading">Administrar</li>
 
                                 <li>
-                                    <a href="view.php" class="<?php echo ($file == "filter-by-sku.php")?'mm-active':''; ?>">
-                                        <i class="fa fa-fw" aria-hidden="true" title="Listado de tareas configuradas"></i>
-                                        Ver tareas
+                                    <a href="search.php" class="<?php echo ($file == "search.php")?'mm-active':''; ?>">
+                                        <i class="pe-7s-search"></i>
+                                        Buscar SKU
+                                    </a>
+                                    <a href="new.php" class="<?php echo ($file == "new.php")?'mm-active':''; ?>">
+                                        <i class="pe-7s-plus"></i>
+                                        Nuevo SKU
                                     </a>
                                 </li>
-                                <li>
-                                    <a href="new.php" class="<?php echo ($file == "filter-by-sku.php")?'mm-active':''; ?>">
-                                        <i class="fa fa-fw" aria-hidden="true" title="Agregar nueva tarea al crontab"></i>
-                                        Nueva
-                                    </a>
-                                </li> -->
-
-                                <!-- <li class="app-sidebar__heading">Configuración</li>
-
-                                <li class="li-submenu <?php 
-                                                        echo    ($file == "server-add.php" 
-                                                              || $file == "conciliar-inormacion-transbank-debito.php")?'mm-active':''; ?>">
-                                    <a href="#">
-                                        <i class="fa fa-fw" aria-hidden="true" title="Servidores"></i>
-                                        Servidores
-                                        <i class="metismenu-state-icon pe-7s-angle-down caret-left"></i>
-                                    </a>
-                                    <ul>
-                                        <li>
-                                            <a href="server-list.php" class="<?php echo ($file == "server-list.php")?'mm-active':''; ?>">
-                                                <i class="fa fa-fw" aria-hidden="true" title="Listado de servidores configurados"></i>
-                                                Listado
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a href="server-add.php" class="<?php echo ($file == "server-add.php")?'mm-active':''; ?>">
-                                                <i class="fa fa-fw" aria-hidden="true" title="Agregar nuevo servidor"></i>
-                                                Nuevo
-                                            </a>
-                                        </li>
-                                    </ul>
-                                </li> -->
 
                             </ul>
                         </div>

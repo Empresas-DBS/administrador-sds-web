@@ -2,15 +2,8 @@
 /*
  * Define constants
  */
-define("API_URL", "");
-define("API_MAIL", "");
-define("API_TOKEN", "");
-define("DB_HOST", "");
-define("DB_NAME", "");
-define("DB_USER", "");
-define("DB_PASS", "");
 define("SHOW_DEBUG_INFO", true);
-define("SHIPPING_METHOD", "Despacho");
+define("OVERWRITE", true);
 
 /* 
  * Get all classes in config folder, and includes in app
