@@ -482,6 +482,10 @@ $file = $explodeUrl[count($explodeUrl) - 1];
                                         <i class="pe-7s-plus"></i>
                                         Nuevo SKU
                                     </a>
+                                    <a href="massive.php" class="<?php echo ($file == "massive.php")?'mm-active':''; ?>">
+                                        <i class="pe-7s-upload"></i>
+                                        Carga Masiva SKU
+                                    </a>
                                 </li>
 
                             </ul>

@@ -47,4 +47,19 @@ class Helper
         $sql = "UPDATE configuracion set valor = '{$val}' where llave = '{$key}'";
         $this->db->dbQuery($sql);
     }
+
+    public function formatDate($date)
+    {
+        $date = \DateTime::createFromFormat('d/m/Y', $date)->format('Y-m-d');
+        return $date;
+    }
+
+    public function validateDate($dateStart, $dateEnd)
+    {
+        if($dateStart > $dateEnd)
+        {
+            return false;
+        }
+        return true;
+    }
 }

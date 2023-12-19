@@ -4,8 +4,9 @@
  */
 define("SHOW_DEBUG_INFO", true);
 define("OVERWRITE", true);
+define("SUMAR", true);//variable en true suma 1 a la cantidad iluminada y stock de seguridad
 
-/* 
+/*
  * Get all classes in config folder, and includes in app
  */
 $directory = dirname(__FILE__) . '/../config/';

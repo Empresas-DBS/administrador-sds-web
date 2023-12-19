@@ -2,6 +2,7 @@
     </div>
     
     <script type="text/javascript" src="./assets/scripts/main.js"></script>
+    <script type="text/javascript" src="./assets/scripts/load_massive.js"></script>
     <script type="text/javascript" src="./assets/scripts/jquery.min.js"></script>
     <script type="text/javascript" src="./assets/scripts/admin.js"></script>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
@@ -17,7 +18,7 @@
 
     <script>
         var oTable = $('.datepicker').datepicker({
-            format: "dd/mm/yy",
+            format: "dd/mm/yyyy",
             language: "es",
         });
 

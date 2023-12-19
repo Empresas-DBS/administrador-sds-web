@@ -135,4 +135,17 @@ svg rect {
   fill: #000000;
 }
 
+.center-vertical-div{
+    display: flex;
+    align-items: center;
+}
+
+.buttons-excel{
+  color: #fff !important;
+  background-color: #2955c8 !important;
+  border-color: #2651be !important;
+  border-radius: 5px !important;
+  margin-left: 10px !important;
+}
+
 /*# sourceMappingURL=styles.css.map */

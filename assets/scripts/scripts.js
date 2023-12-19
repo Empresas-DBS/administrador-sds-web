@@ -141,14 +141,31 @@ $(document).ready(function(){
     });
 
     $('#table-data-show1').DataTable({
-        paging: false,
+        dom: 'RlBfrtip',
+        pageLength: 100,
+        buttons: [
+            {
+                extend: 'excel',
+                title: null,
+                footer: false,
+                exportOptions: {
+                    columns: [ 3, 4, 5, 6, 7, 8 ],
+                }
+            },
+        ],
+        paging: true,
         searching: true,
         language: {
             url: 'assets/scripts/dataTable.spanish.json',
         },
         columnDefs: [
             { type: 'numeric-comma', targets: 0 },
-        ]
+        ],
+        columnDefs: [
+            { "visible": false, "targets": 0 },
+            { "visible": false, "targets": 1},
+            { "visible": false, "targets": 2},
+        ],
     });
 
     $('#tareas-crontab').DataTable({
@@ -331,3 +348,142 @@ $(document).ready(function(){
         $("#form_edit").submit()
     });
 });
+
+
+var contentTable = $('#contentTable');
+contentTable.hide();
+$('#consultarServerSide').on('click', function() {
+    var SUMAR = $('#sumar').val();
+    datatableServerSide(SUMAR);
+});
+
+function datatableServerSide(SUMAR){
+
+    var contentTable = $('#contentTable');
+    contentTable.hide();
+
+    if ($.fn.DataTable.isDataTable('#table-data-show2')) {
+        $('#table-data-show2').DataTable().destroy();
+    }
+
+    var search_canal = $('#search_canal').val();
+    var search_sku = $('#sku').val();
+
+    var table = $('#table-data-show2').DataTable({
+        "processing": true,
+        "serverSide": true,
+        "searching": true,
+        "ajax": {
+            "url": "ajax/ajax_search_server_side.php",
+            "type": "POST",
+            "data": {
+                search_sku: search_sku,
+                search_canal: search_canal,
+            }
+        },
+        "drawCallback": function(settings) {
+            contentTable.show();
+        },
+        "order": [[ 3, "asc" ]],
+        "columns": [
+            {"data": "id"},
+            {"data": "sbs_no"},
+            {"data": "store_no"},
+            {"data": "alu"},
+            {
+                "data": "qty",
+                "render": function(data, type, row) {
+                    if(SUMAR){
+                        return row.qty - 1;
+                    }else{
+                        return row.qty;
+                    }
+                }
+            },
+            {
+                "data": "seguridad",
+                "render": function(data, type, row) {
+                    if(SUMAR){
+                        return row.seguridad - 1;
+                    }else{
+                        return row.seguridad;
+                    }
+                }
+            },
+            {"data": "desde"},
+            {"data": "hasta"},
+            {"data": "canal"},
+            {
+                "data": null,
+                "render": function(data, type, row) {
+                    return `
+                        <button class="mb-2 mr-2 btn-transition btn btn-outline-primary btn-edit2" 
+                            data-alu="${row.alu}" data-canal="${row.canal}">
+                            <i class="fa fa-fw" aria-hidden="true" title=""></i>
+                        </button>
+                        <button class="mb-2 mr-2 btn-transition btn btn-outline-danger btn-delete2" 
+                            data-alu="${row.alu}" data-canal="${row.canal}">
+                            <i class="fa fa-fw" aria-hidden="true" title=""></i>
+                        </button>
+                    `;
+                }
+            }
+        ],
+        "columnDefs": [
+            { "visible": false, "targets": [0, 1, 2] }
+        ],
+        "language": {
+            url: 'assets/scripts/dataTable.spanish.json',
+        },
+    });
+
+    $('#table-data-show2_filter input').on('input', function() {
+        // Actualizar el valor del campo #search_sku
+        $('#search_sku').val(this.value);
+        table.search(this.value).draw();
+    });
+
+    $('#table-data-show2').on('click', '.btn-edit2', function(){
+        let alu = $(this).data("alu"),
+            canal = $(this).data("canal")
+
+        location.href = "new.php?alu=" + alu + "&canal=" + canal;
+    });
+
+    $('#table-data-show2').on('click', '.btn-delete2', function(){
+        let alu = $(this).data("alu"),
+            canal = $(this).data("canal"),
+            $obj = $(this)
+
+        $.delete(alu, canal, $obj);
+    });
+}
+
+function downloadExcel(){
+    //btn downloadExcel
+    let downloadExcel = $('#downloadExcel');
+    downloadExcel.text("Descargando...");
+    downloadExcel.attr('onclick', '');
+
+    $.ajax({
+        url: $.getDomain() + "/ajax/ajax_download_excel.php",
+        type: "post",
+        data: {},
+        success: function (data) {
+            // Crear un enlace temporal y simular clic para descargar el archivo
+            var blob = new Blob([data], { type: 'text/csv' });
+            var link = document.createElement('a');
+            link.href = window.URL.createObjectURL(blob);
+            link.download = "Consolidado_SDS.csv";
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            //btn downloadExcel
+            downloadExcel.text("Excel");
+            downloadExcel.attr('onclick', 'downloadExcel()');
+        },
+        error: function () {
+            console.log("Error en la descarga del archivo. Inténtelo más tarde.");
+        }
+    });
+}

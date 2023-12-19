@@ -41,8 +41,8 @@ class sds
             ALU,
             QTY, 
             SEGURIDAD, 
-            DESDE, 
-            HASTA, 
+            TO_CHAR(DESDE, 'DD-MM-YYYY') as DESDE,
+            TO_CHAR(HASTA, 'DD-MM-YYYY') as HASTA,
             CANAL 
         FROM 
             {$this->tablename} 
@@ -53,6 +53,8 @@ class sds
         {
             $sql .= "AND CANAL = '{$canal}'";
         }
+
+        // $sql .= "AND ROWNUM < 14";
 
         $this->dbWeb1->dbQuery($sql);
         return $this->dbWeb1->dbGetSearch();
@@ -71,7 +73,15 @@ class sds
         $sql = "DELETE FROM {$this->tablename} WHERE ALU = '{$alu}' AND CANAL = '{$canal}'";
         $res = $this->dbWeb1->dbQuery($sql);
 
-        return $res;  
+        return $res;
+    }
+
+    public function truncate(){
+        // $sql = "TRUNCATE TABLE {$this->tablename}";
+        $sql = "DELETE FROM REPORTUSER.STOCK_ILUMINADO_DEV";
+        $res = $this->dbWeb1->dbQuery($sql);
+
+        return $res;
     }
 
     /**
@@ -107,9 +117,13 @@ class sds
             else
             {
                 $columnas = implode(', ', array_keys($fvalues));
-                $valores = "'" . implode("', '", $fvalues) . "'";
+                $valores = implode(', ', array_map(function($value) {
+                    // Si es una cadena y no es una función TO_DATE, agregar comillas
+                    return (is_string($value) && strpos($value, 'TO_DATE') === false) ? "'$value'" : $value;
+                }, $fvalues));
 
                 $sql = "INSERT INTO {$this->tablename} ($columnas) VALUES ($valores)";
+                // var_dump($sql);die();
                 $res = $this->dbWeb1->dbQuery($sql);
                 
                 if($res == 1)
@@ -136,9 +150,89 @@ class sds
 
     }
 
-    
-    
-    
+
+    //buscador server side datatable con paginacion, buscador y ordenamiento
+    public function searchWithPagination($orderColumnIndex, $orderDirection, $start, $length, $search_sku, $canal = ""){
+        // Calcular el número de la página actual
+        $page = $start / $length + 1;
+
+        // Define las columnas permitidas para el ordenamiento datatable
+        $allowedColumns = array('ID', 'SBS_NO', 'STORE_NO', 'ALU', 'QTY', 'SEGURIDAD', 'DESDE', 'HASTA', 'CANAL');
+
+        // Verifica si la columna especificada está permitida para el ordenamiento
+        $orderColumnName = in_array($orderColumnIndex, array_keys($allowedColumns)) ? $allowedColumns[$orderColumnIndex] : 'ID';
+
+        // Construir la consulta SQL con paginación
+        $sql = "SELECT
+            ID,
+            SBS_NO,
+            STORE_NO,
+            ALU,
+            QTY,
+            SEGURIDAD,
+            TO_CHAR(DESDE, 'DD-MM-YYYY') as DESDE,
+            TO_CHAR(HASTA, 'DD-MM-YYYY') as HASTA,
+            CANAL
+        FROM
+            {$this->tablename}
+        WHERE
+            UPPER(ALU) LIKE '%{$search_sku}%'";
+
+        if ($canal != "") {
+            $sql .= " AND CANAL = '{$canal}'";
+        }
+
+        // Aplicar ordenamiento
+        $sql .= " ORDER BY $orderColumnName $orderDirection";
+
+        // Aplicar paginación
+        $sql .= " OFFSET " . (($page - 1) * $length) . " ROWS FETCH NEXT {$length} ROWS ONLY";
+
+        $this->dbWeb1->dbQuery($sql);
+        return $this->dbWeb1->dbGetSearch();
+    }
+
+    public function exportToExcel() {
+
+        $sql = "SELECT
+            ID,
+            SBS_NO,
+            STORE_NO,
+            ALU,";
+        if(SUMAR){
+            $sql .= "
+                QTY - 1 as QTY,
+                SEGURIDAD - 1 as SEGURIDAD,";
+        }else{
+            $sql .= "
+                QTY,
+                SEGURIDAD";
+        }
+
+        $sql .= "
+            TO_CHAR(DESDE, 'DD-MM-YYYY') as DESDE,
+            TO_CHAR(HASTA, 'DD-MM-YYYY') as HASTA,
+            CANAL
+        FROM
+            {$this->tablename}
+        ORDER BY ALU ASC";
+
+        $this->dbWeb1->dbQuery($sql);
+        $data = $this->dbWeb1->dbGetSearchCompact();
+        return $data;
+    }
+
+    public function getTotalRecords($search_sku, $search_canal = ""){
+        $sql = "SELECT COUNT(ID) as CANTIDAD FROM {$this->tablename}
+        WHERE UPPER(ALU) LIKE '%{$search_sku}%'";
+
+        if ($search_canal != "") {
+            $sql .= " AND CANAL = '{$search_canal}'";
+        }
+
+        $this->dbWeb1->dbQuery($sql);
+        return $this->dbWeb1->dbGetCount();
+    }
 
     /**
      * Este código es una función privada que muestra un mensaje de error en la pantalla. La función toma un parámetro 

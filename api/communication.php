@@ -24,7 +24,8 @@ else
 $sess_data = $dr->getPermissionsFromSession($client_dbs_mail, $inserted_id_session);
 if( ! is_array($sess_data))
 {
-    header("location: http://192.168.2.110/REPOSITORIO/administrador-sds-web/login.php");
+    // header("location: http://10.30.70.70/administrador-sds-web/login.php");
+    header("location: https://10.30.61.110/REPOSITORIO/administrador-sds-web/login.php");
     die();
 }
 else
