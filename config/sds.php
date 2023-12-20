@@ -24,7 +24,7 @@ class sds
      */
     function __construct() 
     {
-        $this->tablename = "REPORTUSER.STOCK_ILUMINADO_DEV";
+        $this->tablename = "REPORTUSER.STOCK_ILUMINADO";
     }
 
     /**
